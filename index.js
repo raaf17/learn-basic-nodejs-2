@@ -1,22 +1,27 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const db = require('./connection');
+const response = require('./response');
 const port = 3000;
 
 app.use(bodyParser.json());
 
 // Routes / URL / Endpoint utama kita method GET
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  const sql = "SELECT * FROM mahasiswa";
+  db.query(sql, (error, result) => {
+    // Hasil data dari mysql
+    console.log(result);
+    response(200, result, "get all data from mahasiswa", res)
+  });
 });
 
-app.get('/hello', (req, res) => {
-  console.log({ urlParam: req.query.alamat });
-  const username = req.body.username;
-  if (username === userNameFromDBExist) {
-    res.status(400).send("username tidak dapat digunakan");
-  }
-  res.send('Halaman Hello');
+app.get('/find', (req, res) => {
+  const sql = `SELECT nama FROM mahasiswa WHERE nrp = ${req.query.nrp}`;
+  db.query(sql, (error, result)=> {
+    response(200, result, "find mahasiswa name", res);
+  });
 });
 
 app.post('/login', (req,res) => {
